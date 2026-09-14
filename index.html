@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillBridge — Login & Salary Predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #070b18;
+  --panel: #10172b;
+  --panel2: #151e36;
+  --line: rgba(255, 255, 255, 0.09);
+  --text: #f5f7ff;
+  --muted: #8994ad;
+  --violet: #8b5cf6;
+  --cyan: #22d3ee;
+  --pink: #ec4899;
+  --green: #34d399;
+  --input-bg: #0b1224;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 85% 8%, rgba(139, 92, 246, 0.25), transparent 30%),
+    radial-gradient(circle at 8% 82%, rgba(34, 211, 238, 0.18), transparent 28%),
+    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.08), transparent 45%),
+    var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', Cairo, sans-serif;
+}
+
+/* Moving Cyber Grid Animation */
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 35%, transparent 100%);
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 46px 46px; }
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: auto;
+  padding: 28px 24px 80px;
+}
+
+header {
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 35px;
+  animation: slideDown .8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 700 22px "Space Grotesk", sans-serif;
+  letter-spacing: .2px;
+}
+.brand-name span { color: #a78bfa; }
+
+/* Enhanced 3D Orbiting Logo */
+.brand-logo {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(34,211,238,.2), rgba(139,92,246,.3), rgba(236,72,153,.2));
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 0 20px rgba(139,92,246,.35), inset 0 0 15px rgba(34,211,238,.12);
+  overflow: hidden;
+  transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.brand-logo:hover {
+  transform: rotate(-6deg) scale(1.12);
+  box-shadow: 0 0 30px rgba(34,211,238,.5), 0 0 45px rgba(139,92,246,.4);
+}
+.brand-logo:before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(from 0deg, transparent 0 25%, rgba(34,211,238,.9), transparent 45%, rgba(236,72,153,.85), transparent 70%);
+  animation: logoSpin 3.5s linear infinite;
+}
+.logo-core {
+  position: relative;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font: 800 14px "Space Grotesk";
+  background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+  box-shadow: 0 0 16px rgba(139,92,246,.7);
+  animation: corePulse 2s ease-in-out infinite;
+}
+.orbit {
+  position: absolute;
+  z-index: 2;
+  border: 1.5px solid rgba(255,255,255,.45);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.orbit-a { width: 32px; height: 14px; transform: rotate(35deg); animation: orbitA 2.8s linear infinite; }
+.orbit-b { width: 14px; height: 32px; transform: rotate(35deg); animation: orbitB 2.8s linear infinite; }
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.badge {
+  font-size: 11px;
+  color: #aab4c8;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .035);
+  padding: 7px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: .5px;
+}
+.live-spark {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399;
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+
+.user-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--cyan);
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+.logout-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: .25s;
+  font-family: inherit;
+}
+.logout-btn:hover {
+  color: #fb7185;
+  border-color: rgba(251, 113, 133, 0.5);
+  background: rgba(251, 113, 133, 0.1);
+}
+
+/* AUTH OVERLAY & NEON CARDS */
+.auth-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 160px);
+  animation: fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 450px;
+  background: linear-gradient(145deg, rgba(21, 30, 54, 0.94), rgba(10, 16, 31, 0.96));
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  padding: 38px 34px;
+  box-shadow: 0 25px 75px rgba(0, 0, 0, 0.5), inset 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  position: relative;
+  overflow: hidden;
+  transition: transform .3s, border-color .3s, box-shadow .3s;
+}
+.auth-card:hover {
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 30px 80px rgba(139, 92, 246, 0.18), inset 0 1px rgba(255, 255, 255, 0.12);
+}
+.auth-card:before {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -100px;
+  top: -100px;
+  background: var(--violet);
+  opacity: 0.15;
+  filter: blur(45px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.auth-card:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 70%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.8), rgba(236, 72, 153, 0.8), transparent);
+  animation: cardScan 4.8s ease-in-out infinite;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.auth-header h2 {
+  font: 700 28px "Space Grotesk", sans-serif;
+  margin: 0 0 8px;
+  background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientMove 4s linear infinite;
+  background-size: 200% auto;
+}
+.auth-header p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.auth-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 26px;
+  border: 1px solid var(--line);
+}
+.auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all .3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.auth-tab.active {
+  background: linear-gradient(100deg, rgba(34, 211, 238, 0.18), rgba(139, 92, 246, 0.28));
+  color: var(--text);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 7px;
+  font-weight: 500;
+}
+.input-field {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: all .25s ease;
+}
+.input-field:focus {
+  border-color: rgba(34, 211, 238, 0.7);
+  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15), 0 0 20px rgba(34, 211, 238, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 24px;
+  color: var(--muted);
+}
+.form-options label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  margin: 0;
+}
+.form-options input[type="checkbox"] {
+  accent-color: var(--violet);
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+.form-options a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: .2s;
+}
+.form-options a:hover {
+  text-decoration: underline;
+  color: var(--pink);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font: 700 16px "Space Grotesk", Cairo;
+  color: white;
+  background: linear-gradient(100deg, #7c3aed, var(--violet), #db2777);
+  background-size: 200% auto;
+  box-shadow: 0 10px 32px rgba(139, 92, 246, 0.35);
+  transition: all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: buttonGradient 4s linear infinite;
+  position: relative;
+  overflow: hidden;
+}
+.btn-submit:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 18px 40px rgba(139, 92, 246, 0.5);
+}
+.btn-submit:active { transform: scale(.98); }
+.btn-submit:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 14px;
+  background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.3) 48%, transparent 68%);
+  transform: translateX(-130%);
+  animation: buttonShine 3.5s ease-in-out infinite;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.auth-footer span {
+  color: var(--cyan);
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+}
+.auth-footer span:hover { text-decoration: underline; color: var(--pink); }
+
+/* MAIN APP SECTION */
+#mainAppSection {
+  display: none;
+  animation: fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero { position: relative; text-align: center; padding: 24px 5px 8px; }
+.hero:after {
+  content: ""; position: absolute; left: 50%; top: 40px; width: 400px; height: 200px;
+  transform: translateX(-50%); background: rgba(139, 92, 246, 0.18);
+  filter: blur(80px); z-index: -1;
+}
+.hero h1 {
+  font: 700 clamp(32px, 5.5vw, 58px)/1.2 "Space Grotesk", sans-serif;
+  margin: 0 0 14px; letter-spacing: -1px;
+}
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gradientMove 4s linear infinite;
+  text-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
+}
+.hero p {
+  color: var(--muted); font-size: 16px; max-width: 620px; margin: 0 auto 28px; line-height: 1.6;
+}
+
+.pulse-wrap {
+  position: relative; height: 130px; margin: 0 auto 15px; max-width: 960px;
+  filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.3));
+}
+.pulse-wrap svg { width: 100%; height: 100%; overflow: visible; }
+.pulse-line {
+  fill: none; stroke: url(#pulseGrad); stroke-width: 3.6; stroke-linecap: round;
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.6)) drop-shadow(0 0 16px rgba(139, 92, 246, 0.5));
+  stroke-dasharray: 1400; stroke-dashoffset: 1400;
+  animation: draw 3s ease-out forwards, glide 6s linear 3s infinite;
+}
+.pulse-dot {
+  fill: var(--cyan); filter: drop-shadow(0 0 10px var(--cyan)) drop-shadow(0 0 20px var(--violet));
+  opacity: 0; animation: appear .4s 3s forwards, blink 1.6s 3.4s infinite;
+}
+.pulse-wrap:before, .pulse-wrap:after {
+  content: ""; position: absolute; top: 58%; width: 7px; height: 7px; border-radius: 50%;
+  background: #22d3ee; box-shadow: 0 0 12px #22d3ee, 0 0 24px #8b5cf6;
+  animation: travelDot 4.5s linear infinite; opacity: .85;
+}
+.pulse-wrap:before { left: 12%; }
+.pulse-wrap:after { left: 72%; animation-delay: 1.9s; background: #ec4899; box-shadow: 0 0 12px #ec4899, 0 0 24px #8b5cf6; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 28px; }
+.card {
+  position: relative; overflow: hidden;
+  background: linear-gradient(145deg, rgba(21, 30, 54, 0.94), rgba(10, 16, 31, 0.96));
+  border: 1px solid var(--line); border-radius: 24px; padding: 30px;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.35), inset 0 1px rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  transition: all .35s ease;
+}
+.card:before {
+  content: ""; position: absolute; width: 240px; height: 240px; right: -130px; top: -130px;
+  background: var(--violet); opacity: .1; filter: blur(35px); border-radius: 50%; pointer-events: none;
+}
+.card:after {
+  content: ""; position: absolute; top: 0; left: -120%; width: 70%; height: 1.5px;
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.7), rgba(236, 72, 153, 0.7), transparent);
+  animation: cardScan 5.5s ease-in-out infinite;
+}
+.card:hover { border-color: rgba(139, 92, 246, 0.4); transform: translateY(-4px); box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
+.card h2 { font: 600 18px "Space Grotesk", Cairo; display: flex; align-items: center; gap: 10px; margin: 0 0 22px; }
+.card h2 .n {
+  color: var(--cyan); border: 1px solid rgba(34, 211, 238, 0.4);
+  background: rgba(34, 211, 238, 0.08); font: 600 12px "Space Grotesk";
+  padding: 4px 10px; border-radius: 8px;
+}
+
+select, input[type=range] {
+  width: 100%; background: var(--input-bg); border: 1px solid var(--line); color: var(--text);
+  padding: 12px 14px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none;
+  transition: all .25s ease;
+}
+select:hover, select:focus { border-color: rgba(34, 211, 238, 0.6); box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 8px; }
+.chip {
+  font: 13px "Space Grotesk"; padding: 9px 14px; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--muted); cursor: pointer;
+  background: rgba(255, 255, 255, 0.03); transition: all .25s ease;
+}
+.chip:hover { transform: translateY(-2px); border-color: rgba(139, 92, 246, 0.6); color: #e2e0ff; }
+.chip.active {
+  background: linear-gradient(100deg, rgba(34, 211, 238, 0.15), rgba(139, 92, 246, 0.22));
+  border-color: rgba(139, 92, 246, 0.8); color: #ffffff;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+  animation: chipGlow 2s ease-in-out infinite;
+}
+
+.range-row { display: flex; align-items: center; gap: 14px; }
+.range-val { font: 13px "Space Grotesk"; color: var(--cyan); min-width: 75px; text-align: left; font-weight: 600; }
+input[type=range] { padding: 0; accent-color: var(--violet); height: 6px; }
+
+.result-empty {
+  color: var(--muted); font-size: 14px; line-height: 1.9; text-align: center; padding: 60px 10px;
+}
+.result-empty .icon { font-size: 36px; display: block; margin-bottom: 14px; animation: float 2.5s ease-in-out infinite; }
+.headline-rate { text-align: center; padding: 10px 0 20px; }
+.headline-rate .num {
+  font: 700 52px "Space Grotesk"; line-height: 1;
+  background: linear-gradient(90deg, var(--cyan), #a78bfa, var(--pink));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: numberPop .7s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+.headline-rate .num span { font-size: 16px; color: var(--muted); font-weight: 500; }
+.headline-rate .band { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+.why { margin-top: 24px; }
+.why h3 { font-size: 13px; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
+.contrib { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 13.5px; }
+.contrib .label { width: 150px; color: var(--muted); flex-shrink: 0; }
+.contrib .bar-bg { flex: 1; height: 8px; background: #0b1224; border-radius: 6px; overflow: hidden; }
+.contrib .bar { height: 100%; border-radius: 6px; animation: barGrow 1s ease both; }
+.contrib .val { width: 44px; text-align: left; font: 12px "Space Grotesk"; color: var(--muted); font-weight: 600; }
+
+.skillmatch { display: flex; gap: 18px; margin-top: 22px; }
+.skillmatch .col { flex: 1; }
+.skillmatch h4 { font-size: 13px; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+.skillmatch .tag { display: block; font-size: 13.5px; padding: 6px 0; }
+.tag.ok { color: var(--green); }
+.tag.miss { color: #fb7185; }
+
+.disclaimer {
+  margin-top: 36px; text-align: center; font-size: 12.5px; color: var(--muted);
+  border-top: 1px solid var(--line); padding-top: 20px; line-height: 1.9;
+}
+.disclaimer b { color: var(--text); }
+
+/* KEYFRAME ANIMATIONS */
+@keyframes logoSpin { to { transform: rotate(360deg); } }
+@keyframes corePulse { 50% { transform: scale(1.15); box-shadow: 0 0 25px rgba(34, 211, 238, 0.7); } }
+@keyframes orbitA { to { transform: rotate(395deg); } }
+@keyframes orbitB { to { transform: rotate(-325deg); } }
+@keyframes cardScan { 0%, 35% { left: -120%; opacity: 0; } 45% { opacity: 1; } 75%, 100% { left: 145%; opacity: 0; } }
+@keyframes chipGlow { 50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.25); } }
+@keyframes buttonShine { 0%, 35% { transform: translateX(-130%); } 60%, 100% { transform: translateX(130%); } }
+@keyframes travelDot { 0% { transform: translateX(0) scale(.7); opacity: 0; } 15% { opacity: 1; } 50% { transform: translateX(250px) scale(1.3); opacity: 1; } 85% { opacity: 1; } 100% { transform: translateX(500px) scale(.6); opacity: 0; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes glide { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1400; } }
+@keyframes appear { to { opacity: 1; } }
+@keyframes blink { 50% { opacity: .35; transform: scale(.7); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseDot { 50% { transform: scale(1.5); opacity: .6; } }
+@keyframes float { 50% { transform: translateY(-8px); } }
+@keyframes gradientMove { to { background-position: 200% center; } }
+@keyframes buttonGradient { to { background-position: 200% center; } }
+@keyframes numberPop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes barGrow { from { width: 0 !important; } }
+
+@media(max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+@media(max-width: 600px) {
+  .wrap { padding: 20px 15px 55px; }
+  .badge { display: none; }
+  .hero h1 { font-size: 34px; }
+  .pulse-wrap { height: 100px; }
+  .card { padding: 22px; }
+  .skillmatch { flex-direction: column; }
+  .auth-card { padding: 30px 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <span class="brand-logo" aria-label="SkillBridge logo">
+        <span class="orbit orbit-a"></span>
+        <span class="orbit orbit-b"></span>
+        <span class="logo-core">S</span>
+      </span>
+      <span class="brand-name">Skill<span>Bridge</span></span>
+    </div>
+
+    <div class="header-user">
+      <div id="userBadgeArea" style="display: none;">
+        <div class="user-profile-badge">
+          <span>👤</span>
+          <span id="displayUsername">User</span>
+          <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+      <div class="badge" id="apiBadge">CHECKING API…</div>
+      <span class="live-spark" title="Live interface"></span>
+    </div>
+  </header>
+
+  <!-- AUTH SECTION (LOGIN / SIGN UP) -->
+  <section class="auth-overlay" id="authSection">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2 id="authTitle">🔐 Login</h2>
+        <p id="authSubtitle">Welcome back! Access your SkillBridge Salary Predictor</p>
+      </div>
+
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tabLogin">Login</div>
+        <div class="auth-tab" id="tabSignup">Create Account</div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Username / Email</label>
+          <input type="text" class="input-field" id="loginUser" placeholder="username@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" class="input-field" id="loginPass" placeholder="••••••••" required>
+        </div>
+        <div class="form-options">
+          <label><input type="checkbox" id="rememberMe" checked> Remember me</label>
+          <a href="#" onclick="alert('Password reset link sent!'); return false;">Forgot Password?</a>
+        </div>
+        <button type="submit" class="btn-submit">Login 🚀</button>
+        <div class="auth-footer">
+          Don't have an account? <span id="switchToSignup">Create Account</span>
+        </div>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form id="signupForm" style="display: none;">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" class="input-field" id="signupName" placeholder="Fatma Ibrahim" required>
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" class="input-field" id="signupUsername" placeholder="fatma_elnady" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" class="input-field" id="signupEmail" placeholder="name@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" class="input-field" id="signupPass" placeholder="••••••••" required>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" class="input-field" id="signupConfirmPass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-submit">Create Account 📝</button>
+        <div class="auth-footer">
+          Already have an account? <span id="switchToLogin">Login</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- MAIN SALARY PREDICTOR SECTION -->
+  <main id="mainAppSection">
+    <section class="hero">
+      <h1>Predict Your Rate in <em>Freelance Market</em></h1>
+      <p>Set your skill set and experience level to estimate your hourly rate based on real job data analysis.</p>
+      
+      <div class="pulse-wrap">
+        <svg viewBox="0 0 920 110" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="pulseGrad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#22D3EE"/>
+              <stop offset="55%" stop-color="#8B5CF6"/>
+              <stop offset="100%" stop-color="#EC4899"/>
+            </linearGradient>
+          </defs>
+          <path class="pulse-line" d="M0,60 L120,60 L150,20 L180,95 L210,60 L340,60 L365,35 L390,75 L420,60 L560,60 L590,15 L615,90 L640,55 L660,60 L780,60 L805,40 L830,70 L860,60 L920,60"/>
+          <circle class="pulse-dot" cx="920" cy="60" r="5"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="grid">
+      <!-- INPUT CARD -->
+      <div class="card">
+        <h2><span class="n">01</span> Job Information</h2>
+
+        <label>Experience Level</label>
+        <select id="exp">
+          <option value="Entry Level">Entry Level</option>
+          <option value="Intermediate" selected>Intermediate</option>
+          <option value="Advanced">Advanced</option>
+          <option value="Expert">Expert</option>
+        </select>
+
+        <label>Budget Type</label>
+        <select id="budgetType">
+          <option value="Hourly">Hourly</option>
+          <option value="Fixed Price">Fixed Price</option>
+        </select>
+
+        <label>Project Duration</label>
+        <select id="duration">
+          <option>1 Month</option>
+          <option>2 Months</option>
+          <option>3 Months</option>
+          <option selected>6 Months</option>
+          <option>9 Months</option>
+          <option>12 Months</option>
+        </select>
+
+        <label>Client Country</label>
+        <select id="country">
+          <option>United States</option>
+          <option>United Kingdom</option>
+          <option>Germany</option>
+          <option>UAE</option>
+          <option>Egypt</option>
+          <option>India</option>
+        </select>
+
+        <label>Weekly Availability (Hours)</label>
+        <div class="range-row">
+          <input type="range" id="hours" min="5" max="40" value="25">
+          <div class="range-val" id="hoursVal">25 h/w</div>
+        </div>
+
+        <label>Select Your Skills</label>
+        <div class="chips" id="skillChips">
+          <div class="chip" data-skill="React">React</div>
+          <div class="chip" data-skill="JavaScript">JavaScript</div>
+          <div class="chip" data-skill="Node.js">Node.js</div>
+          <div class="chip" data-skill="SQL">SQL</div>
+          <div class="chip" data-skill="Python">Python</div>
+          <div class="chip" data-skill="REST API">REST API</div>
+          <div class="chip" data-skill="HTML/CSS">HTML/CSS</div>
+          <div class="chip" data-skill="Git">Git</div>
+          <div class="chip" data-skill="Docker">Docker</div>
+          <div class="chip" data-skill="AWS">AWS</div>
+        </div>
+
+        <button class="btn-submit" id="predictBtn" style="margin-top: 22px;">Predict Hourly Rate ⚡</button>
+      </div>
+
+      <!-- RESULT CARD -->
+      <div class="card" id="resultCard">
+        <h2><span class="n">02</span> Prediction & Insights</h2>
+        <div id="resultBody">
+          <div class="result-empty">
+            <span class="icon">📊</span>
+            Select your attributes and skills, then click "Predict Hourly Rate" to generate predictions and feature explanations.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      <b>Note:</b> This UI demo runs a lightweight prediction formula.
+      Once your ML model finishes training, it connects live to the FastAPI endpoint (<span style="font-family:'IBM Plex Mono',monospace">/predict-salary</span>)
+      with full SHAP feature importance output.
+    </div>
+  </main>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:8000';
+
+  const authSection = document.getElementById('authSection');
+  const mainAppSection = document.getElementById('mainAppSection');
+  const userBadgeArea = document.getElementById('userBadgeArea');
+  const displayUsername = document.getElementById('displayUsername');
+
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  const loginForm = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
+  const authTitle = document.getElementById('authTitle');
+  const authSubtitle = document.getElementById('authSubtitle');
+
+  const switchToSignup = document.getElementById('switchToSignup');
+  const switchToLogin = document.getElementById('switchToLogin');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  function showLogin() {
+    tabLogin.classList.add('active');
+    tabSignup.classList.remove('active');
+    loginForm.style.display = 'block';
+    signupForm.style.display = 'none';
+    authTitle.textContent = '🔐 Login';
+    authSubtitle.textContent = 'Welcome back! Access your SkillBridge Salary Predictor';
+  }
+
+  function showSignup() {
+    tabSignup.classList.add('active');
+    tabLogin.classList.remove('active');
+    signupForm.style.display = 'block';
+    loginForm.style.display = 'none';
+    authTitle.textContent = '📝 Create Account';
+    authSubtitle.textContent = 'Join SkillBridge platform and discover top market rates for your skills';
+  }
+
+  tabLogin.addEventListener('click', showLogin);
+  tabSignup.addEventListener('click', showSignup);
+  switchToSignup.addEventListener('click', showSignup);
+  switchToLogin.addEventListener('click', showLogin);
+
+  function loginUser(name) {
+    authSection.style.display = 'none';
+    mainAppSection.style.display = 'block';
+    userBadgeArea.style.display = 'block';
+    displayUsername.textContent = name || 'User';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = document.getElementById('loginUser').value.trim();
+    const name = val ? val.split('@')[0] : 'User';
+    loginUser(name);
+  });
+
+  signupForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const pass = document.getElementById('signupPass').value;
+    const confirmPass = document.getElementById('signupConfirmPass').value;
+    if (pass !== confirmPass) {
+      alert('Passwords do not match!');
+      return;
+    }
+    const name = document.getElementById('signupName').value.trim() || 'New User';
+    loginUser(name);
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    mainAppSection.style.display = 'none';
+    userBadgeArea.style.display = 'none';
+    authSection.style.display = 'flex';
+    loginForm.reset();
+    signupForm.reset();
+    showLogin();
+  });
+
+  const hoursEl = document.getElementById('hours');
+  const hoursVal = document.getElementById('hoursVal');
+  hoursEl.addEventListener('input', () => hoursVal.textContent = hoursEl.value + ' h/w');
+
+  const chips = document.querySelectorAll('.chip');
+  const selected = new Set(['React', 'SQL']);
+  chips.forEach(c => {
+    if (selected.has(c.dataset.skill)) c.classList.add('active');
+    c.addEventListener('click', () => {
+      c.classList.toggle('active');
+      if (c.classList.contains('active')) selected.add(c.dataset.skill);
+      else selected.delete(c.dataset.skill);
+    });
+  });
+
+  const badge = document.getElementById('apiBadge');
+  let apiOnline = false;
+
+  async function checkApi() {
+    try {
+      const r = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(2500) });
+      if (r.ok) {
+        apiOnline = true;
+        badge.textContent = '● LIVE MODEL CONNECTED';
+        badge.style.color = '#2FD9C4';
+        badge.style.borderColor = 'rgba(47,217,196,.4)';
+      } else throw new Error('bad status');
+    } catch (e) {
+      apiOnline = false;
+      badge.textContent = '○ OFFLINE — USING DEMO FORMULA';
+      badge.style.color = '#E8664B';
+      badge.style.borderColor = 'rgba(232,102,75,.4)';
+    }
+  }
+  checkApi();
+
+  const baseRate = { 'Entry Level': 7, 'Intermediate': 13, 'Advanced': 21, 'Expert': 32 };
+  const skillWeight = {
+    'React': 1.4, 'JavaScript': 1.1, 'Node.js': 1.5, 'SQL': 1.0, 'Python': 1.6,
+    'REST API': 1.2, 'HTML/CSS': 0.6, 'Git': 0.4, 'Docker': 2.1, 'AWS': 2.4
+  };
+  const countryAdj = { 'United States': 1.15, 'United Kingdom': 1.08, 'Germany': 1.05, 'UAE': 0.95, 'Egypt': 0.55, 'India': 0.6 };
+
+  function mockPredict({ exp, country, duration, hours, skills }) {
+    let skillBoost = skills.reduce((s, k) => s + (skillWeight[k] || 0.5), 0);
+    let rate = baseRate[exp] * (countryAdj[country] || 0.8);
+    rate += skillBoost + (hours - 25) * 0.03;
+    const months = (duration.match(/\d+/)||[3])[0] * 1;
+    rate += Math.min(months, 12) * 0.15;
+    rate = Math.max(3, rate);
+    return {
+      predicted_hourly_rate: rate,
+      range_low: rate * 0.82,
+      range_high: rate * 1.2,
+      contributions: [
+        { label: 'Experience_Level', importance_pct: Math.min(95, 35 + Object.keys(baseRate).indexOf(exp) * 18) },
+        { label: 'Skills', importance_pct: Math.min(90, 20 + skillBoost * 6) },
+        { label: 'Country', importance_pct: Math.round((countryAdj[country] || 0.8) * 70) },
+        { label: 'Duration', importance_pct: Math.min(60, months * 4) },
+      ],
+      matched_skills: skills,
+      suggested_skills: ['Docker', 'AWS', 'TypeScript'].filter(s => !skills.includes(s)),
+    };
+  }
+
+  function renderResult(data) {
+    const colors = ['#22D3EE', '#8B5CF6', '#EC4899', '#64748B', '#64748B'];
+    document.getElementById('resultBody').innerHTML = `
+      <div class="headline-rate">
+        <div class="num">$${data.predicted_hourly_rate.toFixed(2)}<span> / hour</span></div>
+        <div class="band">Predicted Range: $${data.range_low.toFixed(2)} – $${data.range_high.toFixed(2)} / hr</div>
+      </div>
+      <div class="why">
+        <h3>Feature Contributions (SHAP Values)</h3>
+        ${data.contributions.map((c, i) => `
+          <div class="contrib">
+            <div class="label">${c.label}</div>
+            <div class="bar-bg"><div class="bar" style="width:${Math.min(100, c.importance_pct)}%;background:${colors[i] || '#8592A6'}"></div></div>
+            <div class="val">${c.importance_pct}%</div>
+          </div>`).join('')}
+      </div>
+      <div class="skillmatch">
+        <div class="col">
+          <h4>Strong Skills Match</h4>
+          ${data.matched_skills.length ? data.matched_skills.slice(0, 5).map(s => `<span class="tag ok">✓ ${s}</span>`).join('') : '<span class="tag" style="color:var(--muted)">No skills selected</span>'}
+        </div>
+        <div class="col">
+          <h4>Suggested Skill Boosts</h4>
+          ${data.suggested_skills.map(s => `<span class="tag miss">+ ${s}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById('predictBtn').addEventListener('click', async () => {
+    const exp = document.getElementById('exp').value;
+    const budgetType = document.getElementById('budgetType').value;
+    const country = document.getElementById('country').value;
+    const duration = document.getElementById('duration').value;
+    const hours = +hoursEl.value;
+    const skills = Array.from(selected);
+
+    await checkApi();
+
+    if (apiOnline) {
+      try {
+        const r = await fetch(`${API_BASE}/predict-salary`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            experience_level: exp,
+            budget_type: budgetType,
+            category: 'Web Development',
+            country: country,
+            duration: duration,
+            platform_type: 'Global',
+            skills: skills
+          })
+        });
+        if (!r.ok) throw new Error(await r.text());
+        const data = await r.json();
+        renderResult(data);
+        return;
+      } catch (e) {
+        console.warn('API call failed, falling back to demo formula:', e);
+      }
+    }
+    renderResult(mockPredict({ exp, country, duration, hours, skills }));
+  });
+</script>
+</body>
+</html>
